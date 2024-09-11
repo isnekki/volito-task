@@ -65,7 +65,7 @@ export default function Login() {
                             name='password'
                         />
                         {errors.password && <Text>This field is required.</Text>}
-                        <TouchableOpacity style={styles.signInButton} disabled={errors.password === undefined || errors.email === undefined} onPress={handleSubmit(onSubmit)}>
+                        <TouchableOpacity style={styles.signInButton} disabled={errors.password !== undefined || errors.email !== undefined} onPress={handleSubmit(onSubmit)}>
                             <Text style={styles.signInButtonText}>Sign In</Text>
                         </TouchableOpacity>
                         <Text>Don't have an account? <Link style={styles.createAccountLink} href='/register'>Create account</Link></Text>
