@@ -1,14 +1,18 @@
 import { useContext, createContext, type PropsWithChildren } from 'react'
 import { useStorageState } from './useStorageState'
+import { firebaseSignIn, firebaseSignUp } from '@/utils/fierbaseAuth'
+import { User } from 'firebase/auth'
 
 const AuthContext = createContext<{
-    signIn: () => void
+    signIn: (email: string, password: string) => Promise<User | null>
     signOut: () => void
+    signUp: (email: string, password: string) => Promise<User | null>
     session?: string | null
     isLoading: boolean
 }>({
-    signIn: () => null,
+    signIn: async (email: string, password: string) => null,
     signOut: () => null,
+    signUp: async (email: string, password: string) => null,
     session: null,
     isLoading: false
 })
@@ -31,11 +35,27 @@ export function SessionProvider({ children }: PropsWithChildren) {
     return (
         <AuthContext.Provider
             value={{
-                signIn: () => {
-                    setSession('xxx')
+                signIn: async (email: string, password: string) => {
+                    try {
+                        const credentials = await firebaseSignIn(email, password)
+                        setSession(credentials.user.uid)
+                        return credentials.user
+                    } catch (e) {
+                        return null
+                    }
                 },
                 signOut: () => {
                     setSession(null)
+                },
+                signUp: async (email: string, password: string) => {
+                    try {
+                        const credentials = await firebaseSignUp(email, password)
+                        setSession(credentials.user.uid)
+                        return credentials.user
+                    } catch (e) {
+                        console.log(e)
+                        return null
+                    }
                 },
                 session,
                 isLoading

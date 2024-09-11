@@ -17,6 +17,6 @@ const firebaseConfig = {
   appId: "1:317526569270:web:343bdc13a42fea8df90397",
 };
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 // For more information on how to access Firebase in your project,
 // see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase

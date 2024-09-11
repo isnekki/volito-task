@@ -1,20 +1,22 @@
-import AuthInput from "@/components/ui/AuthInput";
-import { useSession } from "@/hooks/useSession";
-import { Link, router } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
-import { View, Text, SafeAreaView, Button, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
+import { useForm, Controller } from 'react-hook-form'
 
-export default function Register() {
-    const { signUp } = useSession()
+import { useSession } from '@/hooks/useSession'
+import AuthInput from '@/components/ui/AuthInput'
+import { Link, router } from 'expo-router'
+
+
+export default function Login() {
+    const { signIn } = useSession()
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
-            password: "",
+            password: ""
         }
     })
 
     const onSubmit = async (data: { email: string, password: string }) => {
-        const user = await signUp(data.email, data.password)
+        const user = await signIn(data.email, data.password)
         if (user !== null) router.replace("/")
     }
 
@@ -28,7 +30,7 @@ export default function Register() {
             <SafeAreaView>
                 <View style={styles.safeViewInnerContainer}>
                     <View id="login-header" style={styles.headerContainer}>
-                        <Text style={styles.welcomeText}>Welcome</Text>
+                        <Text style={styles.welcomeText}>Welcome back</Text>
                         <Text style={styles.subtitleText}>Turn the best adventures into life-long memories</Text>
                     </View>
                     <View id="login-inputs" style={styles.inputContainer}>
@@ -37,7 +39,7 @@ export default function Register() {
                             rules={{ required: true }}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <AuthInput 
-                                    label="Your Email"
+                                    label="Email"
                                     placeholder='Enter your email'
                                     onBlur={onBlur}
                                     onChangeText={onChange}
@@ -49,10 +51,10 @@ export default function Register() {
                         {errors.email && <Text>This field is required.</Text>}
                         <Controller
                             control={control}
-                            rules={{ required: true, minLength: 8 }}
+                            rules={{ required: true }}
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <AuthInput 
-                                    label="Your Password"
+                                    label="Password"
                                     placeholder='Enter your password'
                                     onBlur={onBlur}
                                     onChangeText={onChange}
@@ -64,15 +66,16 @@ export default function Register() {
                         />
                         {errors.password && <Text>This field is required.</Text>}
                         <TouchableOpacity style={styles.signInButton} disabled={errors.password === undefined || errors.email === undefined} onPress={handleSubmit(onSubmit)}>
-                            <Text style={styles.signInButtonText}>Create account</Text>
+                            <Text style={styles.signInButtonText}>Sign In</Text>
                         </TouchableOpacity>
-                        <Text>Already have an account? <Link style={styles.createAccountLink} href='/login'>Sign In</Link></Text>
+                        <Text>Don't have an account? <Link style={styles.createAccountLink} href='/register'>Create account</Link></Text>
                     </View>
                 </View>
             </SafeAreaView>
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
     container: {
