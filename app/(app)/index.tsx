@@ -3,15 +3,33 @@ import Profile from '@/components/ui/Profile'
 import NoteListView from '@/components/NoteListView'
 import SearchBar from '@/components/ui/SearchBar'
 import FloatingActionButton from '@/components/ui/FloatingActionButton'
-
-import Animated, { useSharedValue, Easing, withTiming, useAnimatedStyle } from 'react-native-reanimated'
+import * as Location from 'expo-location'
+import Animated, { useSharedValue, Easing, withTiming, useAnimatedStyle, interpolateColor } from 'react-native-reanimated'
 
 import List from '@/assets/svgs/list.svg'
 import Map from '@/assets/svgs/map.svg'
 import Sort from '@/assets/svgs/sort.svg'
 import { useEffect, useState } from 'react'
+import NoteMapView from '@/components/ui/NoteMapView'
 
 export default function Index() {
+    const [location, setLocation] = useState<Location.LocationObject | null>(null)
+    const [errorMsg, setErrorMsg] = useState<string | null>(null)
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync()
+            if (status !== 'granted') {
+                setErrorMsg("Permission to access location was denied.")
+                return
+            }
+
+            const location = await Location.getCurrentPositionAsync()
+            setLocation(location)
+        })();
+    }, [])
+
+
     const translateX = useSharedValue(0)
 
     const config = {
@@ -19,7 +37,7 @@ export default function Index() {
         easing: Easing.bezier(0.5, 0.45, 0.4, 0.8),
     }
 
-    const style = useAnimatedStyle(() => (
+    const circleStyle = useAnimatedStyle(() => (
         {
             transform: [{ translateX: withTiming(translateX.value, config) }]
         }
@@ -42,12 +60,12 @@ export default function Index() {
                 <Text style={styles.headerText}>Notes</Text>
                 <View style={styles.viewSwapperContainer}>
                     <TouchableOpacity style={styles.viewSwapperButton} onPress={() => handleViewSwapOnClick(true)}>
-                        <List width={25} height={25} fill="#000000" />
+                        <List width={25} height={25} fill={interpolateColor(isListView ? 0 : 1, [0, 1], ['#F2F2F7', '#D1D1D6'], 'RGB', { gamma: 2.2 })} />
                     </TouchableOpacity>                    
                     <TouchableOpacity style={styles.viewSwapperButton} onPress={() => handleViewSwapOnClick(false)}>
-                        <Map width={25} height={25} fill="#000000" />
+                        <Map width={25} height={25} fill={interpolateColor(isListView ? 0 : 1, [0, 1], ['#D1D1D6', '#F2F2F7'], 'RGB', { gamma: 2.2 })} />
                     </TouchableOpacity>
-                    <Animated.View style={[styles.viewSwapperCircle, style]} />
+                    <Animated.View style={[styles.viewSwapperCircle, circleStyle]} />
                 </View>
             </View>
             <View style={styles.searchContainer}>
@@ -60,7 +78,10 @@ export default function Index() {
             </View>
             <View style={styles.contentContainer}>
                 <FloatingActionButton />
-                <NoteListView />
+                {
+                    isListView ? <NoteListView /> : location && <NoteMapView latitude={location?.coords.latitude} longitude={location?.coords.longitude} />
+                    // <NoteMapView />
+                }
             </View>
         </View>
     )
@@ -92,7 +113,6 @@ const styles = StyleSheet.create({
         width: '25%',
         height: '100%',
         padding: 5,
-        backgroundColor: 'red'
     },
     viewSwapperButton: {
         zIndex: 20
