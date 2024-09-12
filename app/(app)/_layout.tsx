@@ -1,5 +1,6 @@
 import { Redirect, Slot } from 'expo-router';
 import { SafeAreaView, Text } from 'react-native';
+import GlobalStyles from '@/utils/GlobalStyles';
 
 import { useSession } from '@/hooks/useSession';
 import { StatusBar } from 'expo-status-bar';
@@ -16,7 +17,7 @@ export default function AppLayout() {
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#f2f2f7'}}>
+        <SafeAreaView style={GlobalStyles.androidSafeAreaView}>
             <Slot />
             <StatusBar style="dark"/>
         </SafeAreaView>

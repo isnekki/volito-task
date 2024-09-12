@@ -1,9 +1,10 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
+import Plus from '@/assets/svgs/plus.svg'
 
 export default function FloatingActionButton() {
     return (
         <TouchableOpacity style={styles.container}>
-            <Text style={styles.plus}>+</Text>
+            <Plus width={40} height={40} fill="#FFF" />
         </TouchableOpacity>
     )
 }
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({
     plus: {
         fontFamily: 'Montserrat-Regular',
         fontSize: 64,
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        backgroundColor: 'red'
     }
 })
