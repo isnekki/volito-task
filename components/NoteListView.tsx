@@ -16,10 +16,6 @@ function EmptyListView() {
 export default function NoteListView(props: { notes: NoteProps[], onRefresh: () => Promise<void>, isLoading: boolean }) {
     const loadingData = new Array(20).fill(null)
 
-    function ListSeparator() {
-        return <View style={styles.separator} />
-    }
-
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false)
 
     return (

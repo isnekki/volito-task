@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { View, Text, TextInput, TextInputProps, StyleSheet, Image, TouchableOpacity } from "react-native";
+import SetVisible from '@/assets/svgs/set-visible.svg'
+import SetInvisible from '@/assets/svgs/set-invisible.svg'
+
 
 interface AuthInputProps extends TextInputProps {
     label: string,
@@ -18,8 +21,8 @@ export default function AuthInput(props: AuthInputProps) {
             <TouchableOpacity style={styles.passwordVisibilityButton} onPress={handlePasswordVisibilityOnPress}>
                 {
                     isPasswordVisible
-                    ? props.secureTextEntry && <Image style={styles.passwordVisibilityButtonIcon} source={require("@/assets/images/set-invisible.png")} />
-                    : props.secureTextEntry && <Image style={styles.passwordVisibilityButtonIcon} source={require("@/assets/images/set-visible.png")} />
+                    ? props.secureTextEntry && <SetInvisible height={25} width={25} fill="#8F8F8F" />
+                    : props.secureTextEntry && <SetVisible height={25} width={25} fill="#8F8F8F" />
                 }
             </TouchableOpacity>
             <TextInput 

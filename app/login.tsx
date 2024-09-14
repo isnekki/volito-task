@@ -21,6 +21,7 @@ export default function Login() {
         setIsLoading(true)
         const user = await signIn(data.email, data.password)
         if (user !== null) router.replace("/")
+        setIsLoading(false)
     }
 
     return(
@@ -53,7 +54,7 @@ export default function Login() {
                                 )}
                                 name='email'
                             />
-                            {errors.email && <Text>This field is required.</Text>}
+                            {errors.email && <Text style={{ color: 'red' }}>This field is required.</Text>}
                             <Controller
                                 control={control}
                                 rules={{ required: true }}
@@ -69,7 +70,7 @@ export default function Login() {
                                 )}
                                 name='password'
                             />
-                            {errors.password && <Text>This field is required.</Text>}
+                            {errors.password && <Text style={{ color: 'red' }}>This field is required.</Text>}
                             <TouchableOpacity style={styles.signInButton} disabled={errors.password !== undefined || errors.email !== undefined} onPress={handleSubmit(onSubmit)}>
                                 <Text style={styles.signInButtonText}>Sign In</Text>
                             </TouchableOpacity>

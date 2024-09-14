@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
 import { useEffect, useState } from 'react'
 import * as Location from 'expo-location'
-import Animated, { useSharedValue, Easing, withTiming, useAnimatedStyle, interpolateColor } from 'react-native-reanimated'
+import Animated, { useSharedValue, Easing, withTiming, useAnimatedStyle } from 'react-native-reanimated'
 import { getNotes } from '@/utils/firebaseFirestore'
 import Profile from '@/components/ui/Profile'
 import NoteListView from '@/components/NoteListView'
@@ -43,16 +43,16 @@ export default function Index() {
     }, [])
 
 
-    const translateX = useSharedValue(25)
+    const translateX = useSharedValue(0)
 
     const config = {
         duration: 500,
         easing: Easing.bezier(0.5, 0.45, 0.4, 0.8),
     }
 
-    const circleStyle = useAnimatedStyle(() => (
+    const barStyle = useAnimatedStyle(() => (
         {
-            transform: [{ translateX: withTiming(translateX.value, config) }]
+            transform: [{ translateX: withTiming(translateX.value, config)}]
         }
     ))
 
@@ -75,8 +75,8 @@ export default function Index() {
     }
 
     function handleViewSwapOnClick(swapToListView: boolean) {
-        if (swapToListView) translateX.value = 25
-        else translateX.value = 90
+        if (swapToListView) translateX.value = 0
+        else translateX.value = Dimensions.get("screen").width / 2 - 35
 
         setIsListView(swapToListView)
     }
@@ -127,15 +127,7 @@ export default function Index() {
             <Profile />
             <View id="main-header" style={styles.mainHeaderContainer}>
                 <Text style={styles.headerText}>Notes</Text>
-                <View style={styles.viewSwapperContainer}>
-                    <TouchableOpacity style={styles.viewSwapperButton} onPress={() => handleViewSwapOnClick(true)}>
-                        <List width={25} height={25} fill={interpolateColor(isListView ? 0 : 1, [0, 1], ['#F2F2F7', '#D1D1D6'], 'RGB', { gamma: 2.2 })} />
-                    </TouchableOpacity>                    
-                    <TouchableOpacity style={styles.viewSwapperButton} onPress={() => handleViewSwapOnClick(false)}>
-                        <Map width={25} height={25} fill={interpolateColor(isListView ? 0 : 1, [0, 1], ['#D1D1D6', '#F2F2F7'], 'RGB', { gamma: 2.2 })} />
-                    </TouchableOpacity>
-                    <Animated.View style={[styles.viewSwapperCircle, circleStyle]} />
-                </View>
+                <Text style={styles.notesCounterText}>{`${userNotes.length} note${userNotes.length === 1 ? '' : 's'}`}</Text>
             </View>
             <View style={styles.searchContainer}>
                 { isListView ? <SearchBar autoCorrect={false} value={searchKeywords} onChangeText={onSearchbarChangeText} /> : <SwapBar currentNoteTitle={userNotes.length > 0 ? userNotes[currentNoteIndex].title : "No notes"} swapper={cycleNotesInView} /> }
@@ -164,6 +156,17 @@ export default function Index() {
                         />
                 }
             </View>
+            <View style={styles.bottomNavigationMenuContainer}>
+                <Animated.View style={[styles.bottomNavigationMenuModeIndicator, barStyle]} />
+                <View style={styles.bottomNavigationMenuButtonContainer}>
+                    <TouchableOpacity style={styles.bottomNavigationMenuButton} onPress={() => handleViewSwapOnClick(true)}>
+                        <List width={30} height={30} fill="#121212" />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.bottomNavigationMenuButton} onPress={() => handleViewSwapOnClick(false)}>
+                        <Map width={30} height={30} fill="#121212" />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     )
 }
@@ -186,27 +189,10 @@ const styles = StyleSheet.create({
         borderBottomColor: '#121212',
         width: '100%'
     },
-    viewSwapperContainer: {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: 100,
-        height: '100%',
-        padding: 5,
-    },
-    viewSwapperButton: {
-        zIndex: 20
-    },
-    viewSwapperCircle: {
-        position: 'absolute',
-        backgroundColor: '#414E68',
-        borderRadius: 500,
-        right: '100%',
-        zIndex: 0,
-        height: 35,
-        width: 35
+    notesCounterText: {
+        fontFamily: 'Montserrat-Medium',
+        fontSize: 16,
+        color: '#9D9D9D'
     },
     headerText: {
         fontSize: 32,
@@ -222,6 +208,30 @@ const styles = StyleSheet.create({
     contentContainer: {
         position: 'relative',
         flexGrow: 1,
+        marginBottom: 20
+    },
+    bottomNavigationMenuModeIndicator: {
+        width: '50%',
+        height: 5,
+        backgroundColor: '#414E68',
+        left: 0
+    },
+    bottomNavigationMenuContainer: {
+        height: '7.5%',
+    },
+    bottomNavigationMenuButtonContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+    },
+    bottomNavigationMenuButton: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        width: '50%'
     }
 })
 

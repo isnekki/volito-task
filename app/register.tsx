@@ -1,9 +1,13 @@
 import AuthInput from "@/components/ui/AuthInput";
 import { useSession } from "@/hooks/useSession";
+import { uploadToFirestore } from "@/utils/firebaseFirestore";
+import 'react-native-get-random-values'
+import { v4 as uuidv4 } from 'uuid';
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard, ActivityIndicator } from "react-native";
+import { NoteProps } from "./(app)/new-note";
 
 export default function Register() {
     const { signUp } = useSession()
@@ -16,9 +20,30 @@ export default function Register() {
     })
 
     const onSubmit = async (data: { email: string, password: string }) => {
+        setIsLoading(true)
         const user = await signUp(data.email, data.password)
-        console.log(user)
-        if (user !== null) router.replace("/")
+        if (user !== null) {
+            await addWelcomeNoteToNewUser(user.uid)
+            router.replace("/")
+        }
+        setIsLoading(false)
+    }
+
+    async function addWelcomeNoteToNewUser(uid: string) {
+        const welcomeNote: NoteProps = {
+            id: uuidv4(),
+            title: "Welcome to Noted!",
+            location: {
+                longitude: 16.4095,
+                latitude: 120.5992,
+                placeName: "Baguio",
+                isoCountryCode: "PH"
+            },
+            body: "### Noted is a Markdown Note-taking app!\nRight now, you're in **Markdown Mode**, this allows you to see your note in the *pretty* format of Markdown!\nThere are multiple parts to a Note:\n 1. First is the **Title** at the top where you can add a title to your note.\n\n 2. Next is the **body** of your note, here is where you can view the note in Markdown with **Markdown Mode** or edit the Note in **Edit Mode**. To start editing, click on the first button to the left of your **Taskbar** to switch to **Edit Mode**.\n\n 3. After that, you have your **Taskbar** at the bottom. Here is where you can **toggle Markdown mode and Edit mode**, **add a color** to your Note tag, add an **Image**, or **delete** your Note.\n\n *Images will look like so:*\n\n ![notey](https://firebasestorage.googleapis.com/v0/b/volito-task-e86b7.appspot.com/o/images%2FsAlrJiieaQYUIIqWKOghU3MqV3y2%2F90d7851e-aa9e-4dd6-8abb-f7d8a028cb2f.png?alt=media&token=75f83d97-d46e-4668-8eb4-7a497f447aad)\n\n 4. Last is the **Date** at the top left, there you can edit the date of this Note!.\n\n You can find the rest of the Markdown syntax [here!](https://www.markdownguide.org/basic-syntax/)\n\n***Have fun Notetaking! - Notey***",
+            date: new Date(),
+            color: "#8CC4E0"
+        }
+        await uploadToFirestore(welcomeNote, uid)
     }
 
     return(

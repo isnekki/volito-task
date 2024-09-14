@@ -57,6 +57,7 @@ export default function Note() {
     const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false)
     const [errorMsg, setErrorMsg] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [caretPosition, setCaretPosition] = useState<{ start: number, end: number }>({ start: 0, end: 0})
 
     useEffect(() => {
         (async () => {
@@ -78,7 +79,7 @@ export default function Note() {
         GetURIFromMediaLibrary().then(image => {
             if (!image) return;
             if (image.uri !== undefined) GetBlobFromURI(image.uri).then(blob => {
-                firebaseUpload(blob, image.fileName ?? uuidv4(),  (downloadURL) => setNote({...note, body: note.body + `\n\n![image](${downloadURL})`}))
+                firebaseUpload(blob, image.fileName ?? uuidv4(),  (downloadURL) => setNote({...note, body: note.body.slice(0, caretPosition.start) + `\n\n![image](${downloadURL})` + note.body.slice(caretPosition.start) }))
                 .then(() => setIsLoading(false))
             })
         })
@@ -214,15 +215,15 @@ export default function Note() {
                         />
                     </View>
                 </View>
-                <View style={styles.bodyContainer}>
+                <ScrollView style={styles.bodyContainer} contentContainerStyle={{ paddingBottom: 40 }}>
                     {
                         isMarkdownView 
                         ? <Markdown>
                             {note.body}
                         </Markdown>
-                        : <TextInput style={styles.bodyInput} multiline value={note.body} onChangeText={handleOnChangeText} />
+                        : <TextInput onSelectionChange={(e) => setCaretPosition(e.nativeEvent.selection)} style={styles.bodyInput} multiline value={note.body} onChangeText={handleOnChangeText} />
                     }
-                </View>
+                </ScrollView>
             </View>
             <View style={styles.footerContainer}>
                 <TouchableHighlight activeOpacity={0.6} underlayColor="#F0F0F0" onPress={() => setIsMarkdownView(!isMarkdownView)}>

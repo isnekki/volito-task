@@ -5,9 +5,9 @@ import { getCurrentUserUID } from './fierbaseAuth'
 
 const db = getFirestore(app)
 
-export async function uploadToFirestore(note: NoteProps) {
+export async function uploadToFirestore(note: NoteProps, newUID?: string) {
     console.log("Uploading note: ", note)
-    const uid = getCurrentUserUID()
+    const uid = getCurrentUserUID() || newUID
     if (!uid) return
     try {
         const docRef = await addDoc(collection(db, "notes"), {

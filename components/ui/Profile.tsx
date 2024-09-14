@@ -40,7 +40,7 @@ export default function Profile() {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.profileButton} onPress={handleProfilePress}>
-                <Image source={require("@/assets/images/user.png")} style={{ height: 45, width: 45 }} />
+                <Image source={require("@/assets/images/icon.png")} style={{ height: 45, width: 45 }} />
             </TouchableOpacity>
             <Animated.View style={[styles.signOutContainer, style]}>
                 <TouchableOpacity onPress={handleSignOut}>
@@ -59,7 +59,9 @@ const styles = StyleSheet.create({
     },
     profileButton: {
         zIndex: 10,
-        backgroundColor: '#f2f2f7'
+        backgroundColor: '#f2f2f7',
+        borderRadius: 500,
+        overflow: 'hidden'
     },
     signOutContainer: {
         position: 'absolute',

@@ -2,6 +2,7 @@ import { useContext, createContext, type PropsWithChildren } from 'react'
 import { useStorageState } from './useStorageState'
 import { firebaseSignIn, firebaseSignUp } from '@/utils/fierbaseAuth'
 import { User } from 'firebase/auth'
+import { Alert } from 'react-native'
 
 const AuthContext = createContext<{
     signIn: (email: string, password: string) => Promise<User | null>
@@ -41,6 +42,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                         setSession(credentials.user.uid)
                         return credentials.user
                     } catch (e) {
+                        Alert.alert("Error signing in", "Invalid credentials", [{ text: 'OK', style: 'default', onPress: () => null }])
                         return null
                     }
                 },
@@ -53,7 +55,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                         setSession(credentials.user.uid)
                         return credentials.user
                     } catch (e) {
-                        console.log(e)
+                        Alert.alert("Error creating account", "Invalid credentials", [{ text: 'OK', style: 'default', onPress: () => null }])
                         return null
                     }
                 },

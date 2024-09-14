@@ -1,9 +1,9 @@
 import { NoteProps } from "@/app/(app)/new-note"
 import { NoteContext } from "@/contexts/NoteContext"
 import { router } from "expo-router"
-import React, { useContext, createRef, useState, Ref, RefObject, useEffect } from "react"
-import { View, StyleSheet, Text, Platform, Easing } from "react-native"
-import MapView, { AnimatedRegion, Callout, Details, Marker, Region } from "react-native-maps"
+import React, { useContext, createRef, useEffect } from "react"
+import { View, StyleSheet, Text } from "react-native"
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps"
 
 type MapViewProps = {
     initialLatitude: number
@@ -66,6 +66,7 @@ export default function NoteMapView(props: MapViewProps) {
     return (
         <View style={styles.container}>
             <MapView
+                provider={PROVIDER_GOOGLE}
                 ref={mapRef}
                 style={styles.map}
                 initialRegion={{
@@ -83,19 +84,6 @@ export default function NoteMapView(props: MapViewProps) {
                         <NoteMarker key={index} note={note} onCalloutClick={() => handleCalloutClick(note)} />
                     ))
                 }
-                {/* <NoteMarker note={{
-                    title: 'jsabdnjhabsjdhbasjhdbjhasbdhjasbhjdbasjdbjhasbdjhbasjhdbahjsbda',
-                    body: 'asjdnajshkbdnjhabfhjgsbahjsfbajhsbfjhabsfjhabsjhfbajhsfbjhasbfjhbashjfbajhsfba',
-                    location: {
-                        latitude: props.initialLatitude,
-                        longitude: props.initialLongitude,
-                        placeName: 'ajshdbjhasbdjhabshjdbjahsbdhjasbdhjas',
-                        isoCountryCode: 'PH'
-                    },
-                    date: new Date(),
-                    color: 'transparent',
-                    id: ''
-                }} /> */}
             </MapView>
         </View>
     )

@@ -1,12 +1,11 @@
 import { SessionProvider } from "@/hooks/useSession";
-import { Slot, useRootNavigationState } from "expo-router";
+import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from "react";
 import { NoteContextProvider } from "@/contexts/NoteContext";
 import { Try } from "expo-router/build/views/Try";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import { authSubscriber } from "@/utils/fierbaseAuth";
 
 export default function RootLayout() {
   const [error, loaded] = useFonts({
