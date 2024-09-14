@@ -1,30 +1,35 @@
 import { View, TouchableHighlight, Text, StyleSheet } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import Bookmark from '../../assets/svgs/bookmark.svg'
+import { NoteProps } from "@/app/(app)/new-note";
+import { router } from "expo-router";
+import { NoteContext } from "@/contexts/NoteContext";
+import { useContext } from "react";
 
 type NoteListItemProps = {
-    item: {
-        title: string,
-        content: string,
-        date: string,
-        location: string,
-        isoCode: string,
-        color?: string
-    }
+    item: NoteProps
 }
 
 export default function NoteListItem({ item }: NoteListItemProps) {
+    const { state, dispatch } = useContext(NoteContext)
+
+    function handleNoteClick() {
+        dispatch({ type: 'SET_NOTE', payload: item })
+        console.log("Should be updated state: ", state, "Item passed: ", item)
+        router.replace("/new-note")
+    }
+
     return (
-        <View style={styles.container}>
+        <View id={item.id} style={styles.container}>
             <Bookmark style={styles.bookmark} width={18} height={22} fill={item.color || 'transparent'} />
-            <TouchableHighlight activeOpacity={0.6} underlayColor='#E0E0E0' style={styles.noteContainer} onPress={() => console.log('Pressed!')}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor='#E0E0E0' style={styles.noteContainer} onPress={handleNoteClick}>
                 <>
-                    <Text style={styles.date}>{item.date}</Text>
+                    <Text style={styles.date}>{new Date(item.date).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit'})}</Text>
                     <Text numberOfLines={1} style={styles.title}>{item.title}</Text>
-                    <Text numberOfLines={1} style={styles.contentPreview}>{item.content}</Text>
+                    <Text numberOfLines={1} style={styles.contentPreview}>{item.body}</Text>
                     <View style={styles.locationContainer}>
-                        <CountryFlag isoCode={item.isoCode} size={10} />
-                        <Text style={styles.location}>{item.location}</Text>
+                        <CountryFlag isoCode={item.location.isoCountryCode} size={10} />
+                        <Text style={styles.location}>{`${item.location.placeName}, ${item.location.isoCountryCode}`}</Text>
                     </View>
                 </>
             </TouchableHighlight>

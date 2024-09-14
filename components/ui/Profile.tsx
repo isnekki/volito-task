@@ -1,4 +1,5 @@
 import { useSession } from "@/hooks/useSession";
+import { firebaseSignOut } from "@/utils/fierbaseAuth";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 
@@ -15,6 +16,11 @@ export default function Profile() {
             translateX.value = 0
             opacity.value = 0
         }
+    }
+
+    async function handleSignOut() {
+        signOut()
+        await firebaseSignOut()
     }
 
     const config = {
@@ -37,7 +43,7 @@ export default function Profile() {
                 <Image source={require("@/assets/images/user.png")} style={{ height: 45, width: 45 }} />
             </TouchableOpacity>
             <Animated.View style={[styles.signOutContainer, style]}>
-                <TouchableOpacity disabled={opacity.value === 0 && translateX.value === 0} onPress={() => signOut()}>
+                <TouchableOpacity onPress={handleSignOut}>
                     <Text style={styles.signOutButton}>Sign Out</Text>
                 </TouchableOpacity>
             </Animated.View>

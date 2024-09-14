@@ -23,12 +23,14 @@ export default function AuthInput(props: AuthInputProps) {
                 }
             </TouchableOpacity>
             <TextInput 
+                textContentType="oneTimeCode"
                 style={styles.textInput}
                 placeholderTextColor="#88888b"
                 placeholder={props.placeholder}
                 onChangeText={props.onChangeText}
                 onBlur={props.onBlur}
                 value={props.value}
+                autoCorrect={false}
                 secureTextEntry={isPasswordVisible}
             />
         </View>

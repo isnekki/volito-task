@@ -1,9 +1,12 @@
 import { SessionProvider } from "@/hooks/useSession";
-import { Slot, Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Slot, useRootNavigationState } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from "react";
+import { NoteContextProvider } from "@/contexts/NoteContext";
+import { Try } from "expo-router/build/views/Try";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { authSubscriber } from "@/utils/fierbaseAuth";
 
 export default function RootLayout() {
   const [error, loaded] = useFonts({
@@ -27,17 +30,23 @@ export default function RootLayout() {
     'Montserrat-ThinItalic': require("../assets/fonts/Montserrat-ThinItalic.ttf"),
   })
 
+
   useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync()
     }
   }, [loaded, error])
 
-  if (!loaded && !error) return null
 
+  if (!loaded && !error) return null
+    
   return (
-    <SessionProvider>
-      <Slot />
-    </SessionProvider>
+    <Try catch={ErrorBoundary}>
+      <SessionProvider>
+        <NoteContextProvider>
+          <Slot />
+        </NoteContextProvider>
+      </SessionProvider>
+    </Try>
   );
 }

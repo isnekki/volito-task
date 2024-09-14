@@ -1,7 +1,7 @@
-import { TextInput, View, Image, StyleSheet } from "react-native";
+import { TextInput, View, StyleSheet, TextInputProps } from "react-native";
 import Search from '@/assets/svgs/search.svg'
 
-export default function SearchBar() {
+export default function SearchBar(props: TextInputProps) {
     return (
         <View style={styles.container}>
             <Search width={20} height={20} fill="#9D9D9D" />
@@ -9,6 +9,9 @@ export default function SearchBar() {
                 style={styles.textInput}
                 placeholder="Search"
                 placeholderTextColor="#9D9D9D"
+                onChangeText={props.onChangeText}
+                value={props.value}
+                autoCorrect={props.autoCorrect}
             />
         </View>
     )

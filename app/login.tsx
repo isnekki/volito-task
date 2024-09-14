@@ -1,13 +1,15 @@
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, KeyboardAvoidingView,  ActivityIndicator, Keyboard, TouchableWithoutFeedback, Platform } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 
 import { useSession } from '@/hooks/useSession'
 import AuthInput from '@/components/ui/AuthInput'
 import { Link, router } from 'expo-router'
+import { useState } from 'react'
 
 
 export default function Login() {
     const { signIn } = useSession()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             email: "",
@@ -16,6 +18,7 @@ export default function Login() {
     })
 
     const onSubmit = async (data: { email: string, password: string }) => {
+        setIsLoading(true)
         const user = await signIn(data.email, data.password)
         if (user !== null) router.replace("/")
     }
@@ -27,51 +30,54 @@ export default function Login() {
                 <View style={styles.lightBlueCircle}></View>
                 <View style={styles.redCircle}></View>
             </View>
-            <SafeAreaView>
-                <View style={styles.safeViewInnerContainer}>
-                    <View id="login-header" style={styles.headerContainer}>
-                        <Text style={styles.welcomeText}>Welcome back</Text>
-                        <Text style={styles.subtitleText}>Turn the best adventures into life-long memories</Text>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? "padding": "height"} style={{ flex: 1 }}>
+                    <ActivityIndicator animating={isLoading} style={styles.activityIndicator} />
+                    <View style={styles.safeViewInnerContainer}>
+                        <View id="login-header" style={styles.headerContainer}>
+                            <Text style={styles.welcomeText}>Welcome back</Text>
+                            <Text style={styles.subtitleText}>Turn the best adventures into life-long memories</Text>
+                        </View>
+                        <View id="login-inputs" style={styles.inputContainer}>
+                            <Controller
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <AuthInput 
+                                        label="Email"
+                                        placeholder='Enter your email'
+                                        onBlur={onBlur}
+                                        onChangeText={onChange}
+                                        value={value}  
+                                    />
+                                )}
+                                name='email'
+                            />
+                            {errors.email && <Text>This field is required.</Text>}
+                            <Controller
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <AuthInput 
+                                        label="Password"
+                                        placeholder='Enter your password'
+                                        onBlur={onBlur}
+                                        onChangeText={onChange}
+                                        value={value}
+                                        secureTextEntry
+                                    />
+                                )}
+                                name='password'
+                            />
+                            {errors.password && <Text>This field is required.</Text>}
+                            <TouchableOpacity style={styles.signInButton} disabled={errors.password !== undefined || errors.email !== undefined} onPress={handleSubmit(onSubmit)}>
+                                <Text style={styles.signInButtonText}>Sign In</Text>
+                            </TouchableOpacity>
+                            <Text>Don't have an account? <Link style={styles.createAccountLink} href='/register'>Create account</Link></Text>
+                        </View>
                     </View>
-                    <View id="login-inputs" style={styles.inputContainer}>
-                        <Controller
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <AuthInput 
-                                    label="Email"
-                                    placeholder='Enter your email'
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}  
-                                />
-                            )}
-                            name='email'
-                        />
-                        {errors.email && <Text>This field is required.</Text>}
-                        <Controller
-                            control={control}
-                            rules={{ required: true }}
-                            render={({ field: { onChange, onBlur, value } }) => (
-                                <AuthInput 
-                                    label="Password"
-                                    placeholder='Enter your password'
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    secureTextEntry
-                                />
-                            )}
-                            name='password'
-                        />
-                        {errors.password && <Text>This field is required.</Text>}
-                        <TouchableOpacity style={styles.signInButton} disabled={errors.password !== undefined || errors.email !== undefined} onPress={handleSubmit(onSubmit)}>
-                            <Text style={styles.signInButtonText}>Sign In</Text>
-                        </TouchableOpacity>
-                        <Text>Don't have an account? <Link style={styles.createAccountLink} href='/register'>Create account</Link></Text>
-                    </View>
-                </View>
-            </SafeAreaView>
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
         </View>
     )
 }
@@ -80,7 +86,8 @@ export default function Login() {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'white',
-        height: '100%'
+        height: '100%',
+        width: '100%'
     },
     redCircle: {
         position: 'absolute',
@@ -158,5 +165,13 @@ const styles = StyleSheet.create({
         color: "#132744",
         textDecorationLine: 'underline',
         textDecorationColor: '#132744'
+    },
+    activityIndicator: {
+        position: 'absolute',
+        left: '50%',
+        transform: [
+            { translateX: -10 }
+        ],
+        top: '15%'
     }
 })
