@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "volito-task",
-    "slug": "volito-task",
+    "name": "noted",
+    "slug": "noted",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#f2f2f7"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#f2f2f7"
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
